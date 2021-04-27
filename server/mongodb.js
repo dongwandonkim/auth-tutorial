@@ -1,8 +1,16 @@
-const mongodb = require('mongodb');
-const MongoClient = mongodb.MongoClient;
+// const mongodb = require('mongodb');
+// const MongoClient = mongodb.MongoClient;
+// const ObjectID = mongodb.ObjectID
+
+const { MongoClient, ObjectID } = require('mongodb');
 
 const connectionURL = 'mongodb://127.0.0.1:27017';
 const databaseName = 'task-manager';
+
+//generating new id
+// const id = new ObjectID();
+// console.log(id);
+// console.log(id.getTimestamp()); //ObjectID First 4-byte has timestamp value
 
 MongoClient.connect(
   connectionURL,
@@ -13,58 +21,51 @@ MongoClient.connect(
     }
 
     const db = client.db(databaseName);
-    // db.collection('users').insertOne(
+
+    // db.collection('users').findOne(
+    //   { _id: new ObjectID('60878cda2ef90738a59d594a') },
+    //   (err, user) => {
+    //     if (err) return console.log('couldnt find a user');
+    //     console.log(user);
+    //   }
+    // );
+
+    // db.collection('users').updateOne(
+    //   { _id: new ObjectID('60878cda2ef90738a59d594a') },
     //   {
-    //     name: 'Kim',
-    //     age: 27,
-    //   },
-    //   (err, result) => {
-    //     if (err) {
-    //       return console.error('unable to insert');
+    //     $inc: {
+    //       age: 5,
+    //     },
+    //   }
+    // ).then((result) => {
+    //     console.log(result);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+
+    // db.collection('tasks')
+    //   .updateMany(
+    //     { completed: false },
+    //     {
+    //       $set: {
+    //         completed: true,
+    //       },
     //     }
-    //     console.log(result.ops);
-    //   }
-    // );
-
-    // db.collection('users').insertMany(
-    //   [
-    //     {
-    //       name: 'cindy',
-    //       age: 40,
-    //     },
-    //     {
-    //       name: 'jeannie',
-    //       age: 38,
-    //     },
-    //   ],
-    //   (err, result) => {
-    //     if (err) return console.log('unable to inster this time');
-    //     console.log(result.ops);
-    //   }
-    // );
-
-    db.collection('tasks').insertMany(
-      [
-        {
-          description: 'Learn mongodb',
-          completed: false,
-        },
-        {
-          description: 'get a job',
-          completed: false,
-        },
-        {
-          description: 'learn MERN stack',
-          completed: false,
-        },
-      ],
-      (err, result) => {
-        if (err) return console.log('unable to insert data this time');
-
-        console.log(result.ops);
-      }
-    );
-
-    console.log('Connected correctly');
+    //   )
+    //   .then((result) => {
+    //     console.log(result);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+    db.collection('users')
+      .deleteMany({ age: 32 })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 );
