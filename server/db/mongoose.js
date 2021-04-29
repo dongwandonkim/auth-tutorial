@@ -28,19 +28,9 @@ const User = mongoose.model('User', {
     type: String,
     required: true,
     trim: true,
+    minLength: 6,
     validate(value) {
-      if (
-        isStrongPassword(
-          value[
-            {
-              minlength: 6,
-            }
-          ]
-        )
-      ) {
-        throw new Error('Password must be 6 characters or longer');
-      }
-      if (value.includes('password')) {
+      if (value.toLowerCase().includes('password')) {
         throw new Error("Password can not contain a word 'password'.");
       }
     },
@@ -57,8 +47,9 @@ const User = mongoose.model('User', {
 });
 
 const me = new User({
-  name: '      kimkim',
+  name: '      123dongwan',
   email: 'KIM@tes.com     ',
+  password: '123password',
   // age: 23,
 });
 
@@ -70,25 +61,28 @@ me.save()
     console.log('error!', error.errors);
   });
 
-// const Task = mongoose.model('Task', {
-//   description: {
-//     type: String
-//   },
-//   completed: {
-//     type: Boolean,
-//   },
-// });
+const Task = mongoose.model('Task', {
+  description: {
+    type: String,
+    trim: true,
+    required: true,
+  },
+  completed: {
+    type: Boolean,
+    default: false,
+  },
+});
 
-// const task = new Task({
-//   description: 'Learn Mongodb',
-//   completed: false,
-// });
+const task = new Task({
+  description: '     Learn Mongodb',
+  // completed: false,
+});
 
-// task
-//   .save()
-//   .then((result) => {
-//     console.log(result);
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
+task
+  .save()
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
