@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
+    unique: true,
     required: true,
     trim: true,
     lowercase: true,
@@ -41,9 +42,26 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+userSchema.statics.checkIfEmailExist = async (email) => {
+  const user = await User.findOne({ email });
+  if (user) return true;
+  return false;
+};
+
+userSchema.statics.findByCredentials = async (email, password) => {
+  const user = await User.findOne({ email });
+  if (!user) throw new Error('Unable to login');
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) throw new Error('Unable to login');
+
+  return user;
+};
+
+// Hash the password before the saving
 userSchema.pre('save', async function (next) {
   const user = this;
-
+  console.log('this is before');
   if (user.isModified('password')) {
     user.password = await bcrypt.hash(user.password, 8);
   }

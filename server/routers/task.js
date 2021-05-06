@@ -52,7 +52,7 @@ router.delete('/tasks/:id', async (req, res) => {
 router.patch('/tasks/:id', async (req, res) => {
   const _id = req.params.id;
   const body = req.body;
-  const updates = Object.keys(req.body);
+  const updates = Object.keys(body);
   const allowedUpdates = ['description', 'completed'];
   const inValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
@@ -62,10 +62,12 @@ router.patch('/tasks/:id', async (req, res) => {
     return res.status(400).send({ error: 'Invalid updates' });
 
   try {
-    const task = await Task.findByIdAndUpdate(_id, body, {
-      new: true,
-      runValidators: true,
-    });
+    const task = await Task.findById(_id);
+
+    updates.forEach((update) => (task[update] = body[update]));
+
+    await task.save();
+
     if (!task) return res.status(404).send();
     return res.send(task);
   } catch (error) {
