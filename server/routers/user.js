@@ -37,7 +37,7 @@ router.post('/users/login', async (req, res) => {
     );
     res.send(user);
   } catch (error) {
-    res.status(400).send();
+    res.status(400).send('Unable to login');
   }
 });
 

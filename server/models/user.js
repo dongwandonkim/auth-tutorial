@@ -49,6 +49,7 @@ userSchema.statics.checkIfEmailExist = async (email) => {
 };
 
 userSchema.statics.findByCredentials = async (email, password) => {
+  console.log('checking credentials');
   const user = await User.findOne({ email });
   if (!user) throw new Error('Unable to login');
 
@@ -61,7 +62,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
 // Hash the password before the saving
 userSchema.pre('save', async function (next) {
   const user = this;
-  console.log('this is before');
+
   if (user.isModified('password')) {
     user.password = await bcrypt.hash(user.password, 8);
   }
