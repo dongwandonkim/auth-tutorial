@@ -2,6 +2,8 @@ const express = require('express');
 require('./db/mongoose');
 const User = require('./models/user');
 const Task = require('./models/task');
+const jwt = require('jsonwebtoken');
+
 const userRouter = require('./routers/user');
 const taskRouter = require('./routers/task');
 
@@ -12,18 +14,15 @@ app.use(express.json());
 app.use(userRouter);
 app.use(taskRouter);
 
-// const bcrytpt = require('bcryptjs');
-// const myFunction = async () => {
-//   const password = 'abcde12345';
-//   const hashedPassword = await bcrytpt.hash(password, 8);
+const myFunction = async () => {
+  const token = jwt.sign({ _id: 'abc123' }, 'learningjwt', { expiresIn: '7d' });
+  console.log(token);
 
-//   console.log(password);
-//   console.log(hashedPassword);
+  const data = jwt.verify(token, 'learningjwt');
+  console.log(data);
+};
 
-//   const isMatch = await bcrytpt.compare(password, hashedPassword);
-//   console.log(isMatch);
-// };
-// myFunction();
+myFunction();
 
 app.listen(port, () => {
   console.log(`Server is up on port ${port}`);
