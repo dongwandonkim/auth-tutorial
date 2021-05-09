@@ -43,6 +43,31 @@ router.post('/users/login', async (req, res) => {
   }
 });
 
+//user logout
+router.post('/users/logout', auth, async (req, res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter((token) => {
+      return token.token !== req.token;
+    });
+
+    await req.user.save();
+    res.send();
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+//user logout all session
+router.post('/users/logoutAll', auth, async (req, res) => {
+  try {
+    req.user.tokens = [];
+    await req.user.save();
+
+    res.send();
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
 //get a user
 router.get('/users/:id', async (req, res) => {
   const _id = req.params.id;
@@ -76,7 +101,6 @@ router.patch('/users/:id', async (req, res) => {
   const _id = req.params.id;
   const body = req.body;
   const updates = Object.keys(body);
-  console.log(updates);
 
   const allowedUpdates = ['name', 'email', 'password', 'age'];
   const isValidOperation = updates.every((update) =>
