@@ -10,19 +10,22 @@ const taskRouter = require('./routers/task');
 const app = express();
 const port = process.env.PORT || 5000;
 
+// app.use((req, res, next) => {
+//   if (req.method === 'GET') {
+//     res.send('GET request is disabled');
+//   } else {
+//     res.send('its not a GET request');
+//     next();
+//   }
+// });
+
+// app.use((req, res, next) => {
+//   res.status(503).send('site is under Maintenance');
+// });
+
 app.use(express.json());
 app.use(userRouter);
 app.use(taskRouter);
-
-const myFunction = async () => {
-  const token = jwt.sign({ _id: 'abc123' }, 'learningjwt', { expiresIn: '7d' });
-  console.log(token);
-
-  const data = jwt.verify(token, 'learningjwt');
-  console.log(data);
-};
-
-myFunction();
 
 app.listen(port, () => {
   console.log(`Server is up on port ${port}`);

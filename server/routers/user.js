@@ -1,8 +1,9 @@
 const express = require('express');
 const router = new express.Router();
 const User = require('../models/user');
+const auth = require('../middleware/auth');
 
-//Create User
+//Create a User
 router.post('/users', async (req, res) => {
   const user = new User(req.body);
   try {
@@ -12,23 +13,22 @@ router.post('/users', async (req, res) => {
       return res.status(400).send('Email is already taken'); //check if user's email already exist
     } else {
       await user.save();
-      res.status(201).send(user);
+
+      const token = await user.generateAuthToken();
+
+      res.status(201).send({ user, token });
     }
   } catch (error) {
     res.status(400).send(error);
   }
 });
 
-//get all users
-router.get('/users', async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.send(users);
-  } catch (error) {
-    res.status(500).send(error);
-  }
+//get user profile
+router.get('/users/me', auth, async (req, res) => {
+  res.send(req.user);
 });
 
+//user login
 router.post('/users/login', async (req, res) => {
   try {
     const user = await User.findByCredentials(
@@ -36,7 +36,7 @@ router.post('/users/login', async (req, res) => {
       req.body.password
     );
     const token = await user.generateAuthToken();
-    console.log(token);
+
     res.send({ user, token });
   } catch (error) {
     res.status(400).send('Unable to login');
