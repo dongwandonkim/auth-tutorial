@@ -51,6 +51,13 @@ const userSchema = new mongoose.Schema({
   ],
 });
 
+//making a virtual field named tasks
+userSchema.virtual('tasks', {
+  ref: 'Task', //its referencing Task model
+  localField: '_id', //User _id is referenced in Task.owner
+  foreignField: 'owner', //which field is this virtual field is referenced
+});
+
 //whenever res.send() gets called JSON.stringify gets called automatically,
 //JSON.stringify automatically calls toJSON if available.
 userSchema.methods.toJSON = function () {

@@ -69,40 +69,37 @@ router.post('/users/logoutAll', auth, async (req, res) => {
 });
 
 //get a user
-router.get('/users/:id', async (req, res) => {
-  const _id = req.params.id;
+// router.get('/users/:id', async (req, res) => {
+//   const _id = req.params.id;
 
-  try {
-    const user = await User.findById(_id);
-    if (!user) {
-      return res.status(404).send();
-    }
-    res.send(user);
-  } catch (error) {
-    res.status(500).send();
-  }
-});
+//   try {
+//     const user = await User.findById(_id);
+//     if (!user) {
+//       return res.status(404).send();
+//     }
+//     res.send(user);
+//   } catch (error) {
+//     res.status(500).send();
+//   }
+// });
 
 //delete a user
-router.delete('/users/:id', async (req, res) => {
-  const _id = req.params.id;
-
+router.delete('/users/me', auth, async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(_id);
-    if (!user) return res.status(404).send('something went wrong');
-    res.send(user);
+    await req.user.remove();
+    res.send(req.user);
   } catch (error) {
     res.status(500).send();
   }
 });
 
 //update a user
-router.patch('/users/:id', async (req, res) => {
-  const _id = req.params.id;
+router.patch('/users/me', auth, async (req, res) => {
   const body = req.body;
-  const updates = Object.keys(body);
-
+  const updates = Object.keys(body); //get keys from body
   const allowedUpdates = ['name', 'email', 'password', 'age'];
+
+  //check if updates's keys are allowed to update
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
   );
@@ -112,16 +109,10 @@ router.patch('/users/:id', async (req, res) => {
   }
 
   try {
-    const user = await User.findById(_id);
+    updates.forEach((update) => (req.user[update] = body[update]));
 
-    updates.forEach((update) => (user[update] = body[update]));
-
-    await user.save();
-
-    if (!user) {
-      return res.status(404).send();
-    }
-    res.send(user);
+    await req.user.save();
+    res.send(req.user);
   } catch (error) {
     res.status(400).send(error);
   }
