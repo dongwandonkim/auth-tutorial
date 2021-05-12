@@ -6,6 +6,16 @@ const multer = require('multer');
 
 const upload = multer({
   dest: 'avatar',
+  limits: {
+    fileSize: 1000000,
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
+      cb(new Error('File must be an image'));
+    }
+
+    cb(undefined, true);
+  },
 });
 
 //Create a User
