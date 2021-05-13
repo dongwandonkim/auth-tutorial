@@ -4,6 +4,7 @@ const User = require('../models/user');
 const auth = require('../middleware/auth');
 const multer = require('multer');
 const sharp = require('sharp');
+const { sendWelcomeEmail, sendCancelationEmail } = require('../emails/account');
 
 const upload = multer({
   limits: {
@@ -27,7 +28,7 @@ router.post('/users', async (req, res) => {
       return res.status(400).send('Email is already taken'); //check if user's email already exist
     } else {
       await user.save();
-
+      sendWelcomeEmail(user.email, user.name);
       const token = await user.generateAuthToken();
 
       res.status(201).send({ user, token });
@@ -141,6 +142,7 @@ router.get('/users/:id/avatar', async (req, res) => {
 router.delete('/users/me', auth, async (req, res) => {
   try {
     await req.user.remove();
+    sendCancelationEmail(req.user.email, req.user.name);
     res.send(req.user);
   } catch (error) {
     res.status(500).send();

@@ -22,9 +22,5 @@ const taskSchema = new mongoose.Schema(
   }
 );
 
-taskSchema.pre('save', async function () {
-  console.log('task middleware');
-});
-
 const Task = mongoose.model('Task', taskSchema);
 module.exports = Task;
